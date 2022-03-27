@@ -118,8 +118,11 @@ unsafe fn read_mem(lua: gmod::lua::State) -> i32 {
 #[lua_function]
 unsafe fn get_base_addr(lua: gmod::lua::State) -> i32 {
 	match try_get_memory_range() {
-		Some(mem) => lua.push_number(mem.base() as f64),
-		None => lua.push_number(-1.0),
+		Some(mem) => {
+			let hex = format!("{:x}", mem.base());
+			lua.push_string(&hex);
+		},
+		None => lua.push_string("0x00000000"),
 	}
 
 	1
