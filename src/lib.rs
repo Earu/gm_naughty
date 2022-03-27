@@ -127,10 +127,10 @@ unsafe fn read_mem(lua: gmod::lua::State) -> i32 {
 unsafe fn get_base_addr(lua: gmod::lua::State) -> i32 {
 	match try_get_memory_range() {
 		Some(mem) => {
-			let hex = format!("{:x}", mem.base());
+			let hex = format!("0x{:x}", mem.base());
 			lua.push_string(&hex);
 		},
-		None => lua.push_string("0x00000000"),
+		None => lua.push_string("0x000000000000"),
 	}
 
 	1
