@@ -1,7 +1,7 @@
 # gm_naughty
 Write/Read arbitrary Garry's Mod memory locations.
 
-*Disclaimer: Yes, this is not particularly useful as there better programs that exist to achieve this, however it's Sunday and I'm bored*
+*Disclaimer: Yes, this is not particularly useful as there are better programs that exist to achieve this, however it's Sunday and I'm bored*
 
 ## Examples
 Getting gmod's base address:
