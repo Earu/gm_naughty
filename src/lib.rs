@@ -60,6 +60,8 @@ unsafe fn write_mem(lua: gmod::lua::State) -> i32 {
 				},
 				"table" => {
 					let mut value = Vec::new();
+
+					lua.push_nil();
 					while lua.next(2) != 0 {
 						match try_into_u8(lua.check_integer(-1)) {
 							Some(byte) => {
@@ -70,6 +72,7 @@ unsafe fn write_mem(lua: gmod::lua::State) -> i32 {
 
 						lua.pop();
 					}
+
 					value
 				},
 				t => return deny(lua, &format!("Unsupported data type: {}", t)),
