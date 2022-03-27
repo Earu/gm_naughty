@@ -106,9 +106,17 @@ unsafe fn read_mem(lua: gmod::lua::State) -> i32 {
 
 			// if true, we'll offset the address by the base address of the memory range
 			let should_offset = lua.get_boolean(3);
-			mem.read_memory(addr, size, should_offset);
+			let bytes = mem.read_memory(addr, size, should_offset);
 
 			lua.push_boolean(true);
+			lua.new_table();
+
+			for (i, byte) in bytes.iter().enumerate() {
+				lua.push_number((i + 1) as f64);
+				lua.push_integer(*byte as isize);
+				lua.set_table(-3);
+			}
+
 			1
 		},
 		None => deny(lua, "Could not get memory range of process"),
