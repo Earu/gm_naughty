@@ -43,9 +43,9 @@ unsafe fn write_mem(lua: gmod::lua::State) -> i32 {
 	match try_get_memory_range() {
 		Some(mem) => {
 			// we're using a string here because with precision error addresses could get truncated
-			let addr = match lua.check_string(1).parse::<usize>() {
+			let addr = match usize::from_str_radix(lua.check_string(1).trim_start_matches("0x"), 16) {
 				Ok(addr) => addr,
-				Err(_) => return deny(lua, "Invalid address"),
+				Err(e) => return deny(lua, &format!("Invalid address: {}", e.to_string())),
 			};
 
 			let should_offset = lua.get_boolean(3); // if true, we'll offset the address by the base address of the memory range
@@ -72,7 +72,7 @@ unsafe fn write_mem(lua: gmod::lua::State) -> i32 {
 					}
 					value
 				},
-				_ => return deny(lua, "Unsupported data type"),
+				t => return deny(lua, &format!("Unsupported data type: {}", t)),
 			};
 
 			mem.write_memory(addr, &data, should_offset);
@@ -89,9 +89,9 @@ unsafe fn read_mem(lua: gmod::lua::State) -> i32 {
 	match try_get_memory_range() {
 		Some(mem) => {
 			// we're using a string here because with precision error addresses could get truncated
-			let addr = match lua.check_string(1).parse::<usize>() {
+			let addr = match usize::from_str_radix(lua.check_string(1).trim_start_matches("0x"), 16) {
 				Ok(addr) => addr,
-				Err(_) => return deny(lua, "Invalid address"),
+				Err(e) => return deny(lua, &format!("Invalid address: {}", e.to_string())),
 			};
 
 			let requested_size = lua.check_number(2);
