@@ -7,28 +7,20 @@ use sysinfo;
 extern crate gmod;
 
 fn try_get_memory_range() -> Option<ProcessMemory> {
-	match sysinfo::get_current_pid() {
-		Ok(pid) => {
-			match ProcessMemory::attach_process(pid as u32) {
-				Some(mem) => {
-					mem.resume();
-					Some(mem)
-				},
-				None => None,
-			}
-		},
-		Err(_) => None
+	if let Ok(pid) = sysinfo::get_current_pid() {
+		if let Some(mem) = ProcessMemory::attach_process(pid as u32) {
+			mem.resume();
+			return Some(mem);
+		}
 	}
+
+	None
 }
 
 fn try_into_u8(val: isize) -> Option<u8> {
-	if val < 0 || val > 255 {
-		None
-	} else {
-		match u8::try_from(val as usize) {
-			Ok(val) => Some(val),
-			Err(_) => None
-		}
+	match val {
+		0..=255 => Some(val as u8),
+		_ => None
 	}
 }
 
