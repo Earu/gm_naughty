@@ -112,7 +112,7 @@ unsafe fn read_mem(lua: gmod::lua::State) -> i32 {
 				lua.set_table(-3);
 			}
 
-			1
+			2
 		},
 		None => deny(lua, "Could not get memory range of process"),
 	}
