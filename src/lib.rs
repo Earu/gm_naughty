@@ -131,6 +131,23 @@ unsafe fn get_base_addr(lua: gmod::lua::State) -> i32 {
 	1
 }
 
+#[lua_function]
+unsafe fn compute_address(lua: gmod::lua::State) -> i32 {
+	let addr = match usize::from_str_radix(lua.check_string(1).trim_start_matches("0x"), 16) {
+		Ok(addr) => addr,
+		Err(e) => return deny(lua, &format!("Invalid address: {}", e.to_string())),
+	};
+
+	let final_addr = match lua.check_integer(2) {
+		offset if offset < 0 => addr - offset as usize,
+		offset => addr + offset as usize,
+	};
+
+	let hex = format!("0x{:x}", final_addr);
+	lua.push_string(&hex);
+	1
+}
+
 #[gmod13_open]
 unsafe fn gmod13_open(lua: gmod::lua::State) -> i32 {
 	lua.new_table();
@@ -143,6 +160,9 @@ unsafe fn gmod13_open(lua: gmod::lua::State) -> i32 {
 
 	lua.push_function(get_base_addr);
 	lua.set_field(-2, lua_string!("GetBaseAddress"));
+
+	lua.push_function(compute_address);
+	lua.set_field(-2, lua_string!("ComputeAddress"));
 
 	lua.set_global(lua_string!("mem"));
 
